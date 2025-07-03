@@ -1,0 +1,12 @@
+{
+  "name": "events",
+  "version": "1.0.0",
+  "main": "taskManager.js","scripts": {
+  "start": "node taskManager.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
+

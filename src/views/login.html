@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h2>Login</h2>
+
+  <form id="loginForm">
+    <input type="email" name="email" placeholder="Seu e-mail" required>
+    <input type="password" name="senha" placeholder="Sua senha" required>
+    <button type="submit">Entrar</button>
+  </form>
+
+  <p id="mensagem"></p>
+
+  <script>
+    const form = document.getElementById('loginForm');
+    const mensagem = document.getElementById('mensagem');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: form.email.value,
+          senha: form.senha.value
+        })
+      });
+
+      const json = await res.json();
+
+      if (res.ok) {
+        // Salva o token no localStorage
+        localStorage.setItem('token', json.token);
+
+        // Decodifica o tipo de usuário do token JWT
+        const payloadBase64 = json.token.split('.')[1];
+        const payload = JSON.parse(atob(payloadBase64));
+        const tipo = payload.tipo;
+
+        // Redireciona para o painel correto
+        if (tipo === 'organizador' || tipo === 'admin') {
+          window.location.href = 'organizador.html';
+        } else {
+          window.location.href = 'participante.html';
+        }
+      } else {
+        mensagem.textContent = json.error || 'Erro ao fazer login.';
+      }
+    });
+  </script>
+</body>
+</html>

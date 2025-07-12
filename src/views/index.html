@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>Sistema de Eventos</title>
+</head>
+<body>
+  <h1>Bem-vindo ao Sistema de Eventos</h1>
+  <p><a href="login.html">Login</a> | <a href="register.html">Cadastro</a></p>
+</body>
+</html>
+
+<h3>Criar Novo Evento
+<form id="formEvento">
+  <input type="text" name="titulo" placeholder="Título do Evento" required />
+  <textarea name="descricao" placeholder="Descrição do Evento" required></textarea>
+  <input type="text" name="categoria" placeholder="Categoria" required />
+  <input type="date" name="data" required />
+  <input type="text" name="local" placeholder="Local" required />
+  <select name="tipo" required>
+    <option value="online">Online</option>
+    <option value="presencial">Presencial</option>
+  </select>
+  <button type="submit">Criar Evento</button>
+</form>
+</h3>
+<ul id="eventos"></ul>
+
+<hr>
+
+<div id="comentarioBox" style="display:none;">
+  <h3>Comentários do Evento</h3>
+  <ul id="listaComentarios"></ul>
+
+  <textarea id="novoComentario" placeholder="Escreva um comentário..."></textarea><br>
+  <button onclick="enviarComentario()">Enviar</button>
+</div>

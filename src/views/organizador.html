@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Painel do Organizador</title>
+</head>
+<body>
+  <h2>Painel do Organizador</h2>
+
+  <button id="logoutBtn">Sair</button>
+
+  <h3>Seus Eventos</h3>
+  <ul id="listaEventos"></ul>
+
+  <h3>Criar Novo Evento
+    <h3>Criar Novo Evento
+
+<form id="formEvento">
+  <input type="text" name="titulo" placeholder="Título do Evento" required />
+  <textarea name="descricao" placeholder="Descrição do Evento" required></textarea>
+  <input type="text" name="categoria" placeholder="Categoria" required />
+  <input type="date" name="data" required />
+  <input type="text" name="local" placeholder="Local" required />
+  <select name="tipo" required>
+    <option value="online">Online</option>
+    <option value="presencial">Presencial</option>
+  </select>
+  <button type="submit">Criar Evento</button>
+</form>
+
+  </h3>
+  <form id="eventoForm">
+    <input type="text" name="titulo" placeholder="Título" required><br>
+    <textarea name="descricao" placeholder="Descrição" required></textarea><br>
+    <input type="text" name="categoria" placeholder="Categoria" required><br>
+    <input type="date" name="data" required><br>
+    <input type="text" name="local" placeholder="Local" required><br>
+    <select name="tipo" required>
+      <option value="online">Online</option>
+      <option value="presencial">Presencial</option>
+    </select><br><br>
+    <button type="submit">Criar Evento</button>
+  </form>
+
+  <p id="mensagem"></p>
+
+  <script>
+    const token = localStorage.getItem('token');
+    const listaEventos = document.getElementById('listaEventos');
+    const mensagem = document.getElementById('mensagem');
+
+    if (!token) {
+      alert('Você precisa estar logado!');
+      window.location.href = 'login.html';
+    }
+
+    // Carrega eventos do organizador
+    async function carregarEventos() {
+      const res = await fetch('/api/events', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      const eventos = await res.json();
+
+      listaEventos.innerHTML = '';
+
+      eventos
+        .filter(ev => ev.organizador_id) // Mostra só os que têm organizador
+        .forEach(ev => {
+          const li = document.createElement('li');
+          li.textContent = `${ev.titulo} - ${ev.data} (${ev.tipo})`;
+          listaEventos.appendChild(li);
+        });
+    }
+
+    carregarEventos();
+
+    // Formulário de criação
+    const form = document.getElementById('eventoForm');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = {
+        titulo: form.titulo.value,
+        descricao: form.descricao.value,
+        categoria: form.categoria.value,
+        data: form.data.value,
+        local: form.local.value,
+        tipo: form.tipo.value
+      };
+
+      const res = await fetch('/api/events', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(data)
+      });
+
+      const json = await res.json();
+      mensagem.textContent = json.message || json.error;
+
+      if (res.ok) {
+        form.reset();
+        carregarEventos(); // Atualiza a lista
+      }
+    });
+
+    // Botão de logout
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      localStorage.removeItem('token');
+      window.location.href = 'login.html';
+    });
+  </script>
+</body>
+</html>
